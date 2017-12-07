@@ -3,6 +3,21 @@
 require_once 'membershiprecords.civix.php';
 use CRM_Membershiprecords_ExtensionUtil as E;
 
+function membershiprecords_civicrm_pre($op, $objectName, $id, &$params){
+  
+CRM_Core_Session::setStatus(ts($id + 'something here'), $id, 'no-popup');
+  //echo $objectName;
+  //echo "\r\n";
+  //echo $params;
+  echo "<pre>"; 
+  ///home/rzcodert/buildkit/bin
+  //PATH="/home/rzcodert/buildkit/bin:$PATH"
+  print_r($params);
+  //PATH=/home/rzcodert/buildkit/bin:$PATH 
+  echo "/<pre>"; 
+ //die($op);  
+}
+
 /**
  * Implements hook_civicrm_config().
  *
