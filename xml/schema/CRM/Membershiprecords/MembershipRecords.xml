@@ -4,7 +4,7 @@
   <base>CRM/Membershiprecords</base>
   <class>MembershipRecords</class>
   <name>civicrm_membershiprecords</name>
-  <comment>FIXME</comment>
+  <comment>This entity its for the membership period, should register a record when a new membership its registered or if its renewed</comment>
   <add>4.4</add>
   <log>true</log>
 
@@ -33,5 +33,47 @@
     <add>4.4</add>
     <onDelete>CASCADE</onDelete>
   </foreignKey>
+
+  <field>
+    <name>membership_id</name>
+    <type>int unsigned</type>
+    <comment>FK to Membership</comment>
+    <add>4.4</add>
+  </field>
+  <foreignKey>
+    <name>membership_id</name>
+    <table>civicrm_membership</table>
+    <key>id</key>
+    <add>4.4</add>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+
+  <field>
+    <name>contribution_id</name>
+    <type>int unsigned</type>
+    <comment>FK to Contribution</comment>
+    <add>4.4</add>
+  </field>
+  <foreignKey>
+    <name>contribution_id</name>
+    <table>civicrm_contribution</table>
+    <key>id</key>
+    <add>4.4</add>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+
+  <field>
+    <name>start_date</name>
+    <type>datetime</type>
+    <comment></comment>
+    <add>4.4</add>
+  </field>
+
+  <field>
+    <name>end_date</name>
+    <type>datetime</type>
+    <comment></comment>
+    <add>4.4</add>
+  </field>
 
 </table>
