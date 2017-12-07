@@ -2,14 +2,14 @@
 
 ![Screenshot](/images/screenshot.png)
 
-(*FIXME: In one or two paragraphs, describe what the extension does and why one would download it. *)
+This extension will record periods/terms when a membership its created or renewed.
 
 The extension is licensed under [AGPL-3.0](LICENSE.txt).
 
 ## Requirements
 
 * PHP v5.4+
-* CiviCRM (*FIXME: Version number*)
+* CiviCRM v4.7
 
 ## Installation (Web UI)
 
@@ -22,7 +22,7 @@ install it with the command-line tool [cv](https://github.com/civicrm/cv).
 
 ```bash
 cd <extension-dir>
-cv dl org.civicrmews.membershiprecords@https://github.com/FIXME/org.civicrmews.membershiprecords/archive/master.zip
+cv dl org.civicrmews.membershiprecords@https://github.com/elennio/org.civicrmews.membershiprecords/archive/master.zip
 ```
 
 ## Installation (CLI, Git)
@@ -31,14 +31,14 @@ Sysadmins and developers may clone the [Git](https://en.wikipedia.org/wiki/Git) 
 install it with the command-line tool [cv](https://github.com/civicrm/cv).
 
 ```bash
-git clone https://github.com/FIXME/org.civicrmews.membershiprecords.git
+git clone https://github.com/elennio/org.civicrmews.membershiprecords.git
 cv en membershiprecords
 ```
 
 ## Usage
 
-(* FIXME: Where would a new user navigate to get started? What changes would they see? *)
+When installed go to renew a membership or start creating one...
 
 ## Known Issues
 
-(* FIXME *)
+No issues yet.
