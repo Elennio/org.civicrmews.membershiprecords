@@ -5,9 +5,18 @@ use CRM_Membershiprecords_ExtensionUtil as E;
 
 function membershiprecords_civicrm_pre($op, $objectName, $id, &$params){
   
-CRM_Core_Session::setStatus(ts($id + 'something here'), $id, 'no-popup');
-  //echo $objectName;
+//CRM_Core_Session::setStatus(ts($id + 'something here'), $id, 'no-popup');
+  echo "<pre>";
+  print_r($op);
+  echo "</pre>";
+
+  echo "<pre>";
+  print_r($objectName);
+  echo "</pre>";
   //echo "\r\n";
+  echo "<pre>";
+  print_r($id);
+  echo "</pre>";
   //echo $params;
   echo "<pre>"; 
   ///home/rzcodert/buildkit/bin
@@ -15,7 +24,26 @@ CRM_Core_Session::setStatus(ts($id + 'something here'), $id, 'no-popup');
   print_r($params);
   //PATH=/home/rzcodert/buildkit/bin:$PATH 
   echo "/<pre>"; 
- //die($op);  
+ /*die($op);
+  $result = civicrm_api3('MembershipRecords', 'create', array(
+    'contact_id' => 203,
+    'membership_id' => "",
+    'start_date' => "",
+    'end_date' => "",
+    'contribution_id' => "",
+  ));  */
+}
+function membershiprecords_civicrm_post($op, $objectName, $objectId, &$objectRef) {
+  /*if ($objectName == 'Membership' && $op == 'create') {
+    CRM_Core_Transaction::addCallback(CRM_Core_Transaction::PHASE_POST_COMMIT,
+      'updateMembershipCustomField', array($objectRef->id));
+    break;
+  }*/
+  echo "POST";
+  echo "<pre>";
+  print_r($objectRef);
+  echo "</pre>";
+  die('COWABUNGA');
 }
 
 /**

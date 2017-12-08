@@ -23,44 +23,23 @@
   <field>
     <name>contact_id</name>
     <type>int unsigned</type>
-    <comment>FK to Contact</comment>
+    <comment>referenced to Contact</comment>
     <add>4.4</add>
   </field>
-  <foreignKey>
-    <name>contact_id</name>
-    <table>civicrm_contact</table>
-    <key>id</key>
-    <add>4.4</add>
-    <onDelete>CASCADE</onDelete>
-  </foreignKey>
-
+  
   <field>
     <name>membership_id</name>
     <type>int unsigned</type>
-    <comment>FK to Membership</comment>
+    <comment>referenced to Membership</comment>
     <add>4.4</add>
   </field>
-  <foreignKey>
-    <name>membership_id</name>
-    <table>civicrm_membership</table>
-    <key>id</key>
-    <add>4.4</add>
-    <onDelete>CASCADE</onDelete>
-  </foreignKey>
 
   <field>
     <name>contribution_id</name>
     <type>int unsigned</type>
-    <comment>FK to Contribution</comment>
+    <comment>referenced to Contribution</comment>
     <add>4.4</add>
   </field>
-  <foreignKey>
-    <name>contribution_id</name>
-    <table>civicrm_contribution</table>
-    <key>id</key>
-    <add>4.4</add>
-    <onDelete>CASCADE</onDelete>
-  </foreignKey>
 
   <field>
     <name>start_date</name>
