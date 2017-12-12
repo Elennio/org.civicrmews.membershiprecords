@@ -4,47 +4,85 @@ require_once 'membershiprecords.civix.php';
 use CRM_Membershiprecords_ExtensionUtil as E;
 
 function membershiprecords_civicrm_pre($op, $objectName, $id, &$params){
-  
-//CRM_Core_Session::setStatus(ts($id + 'something here'), $id, 'no-popup');
-  echo "<pre>";
-  print_r($op);
-  echo "</pre>";
+  $myObjectRefKeysExternal = explorationArray($params);
 
-  echo "<pre>";
-  print_r($objectName);
-  echo "</pre>";
-  //echo "\r\n";
-  echo "<pre>";
-  print_r($id);
-  echo "</pre>";
-  //echo $params;
-  echo "<pre>"; 
-  ///home/rzcodert/buildkit/bin
-  //PATH="/home/rzcodert/buildkit/bin:$PATH"
-  print_r($params);
-  //PATH=/home/rzcodert/buildkit/bin:$PATH 
-  echo "/<pre>"; 
- /*die($op);
-  $result = civicrm_api3('MembershipRecords', 'create', array(
-    'contact_id' => 203,
-    'membership_id' => "",
-    'start_date' => "",
-    'end_date' => "",
-    'contribution_id' => "",
-  ));  */
+  if ($objectName == 'Membership' && $op == 'edit'){  
+    //Getting the contact ID
+    $resultGetMembership = civicrm_api3('Membership', 'get', array(
+      'sequential' => 1,
+      'return' => array("contact_id"),
+      'id' => $id,
+    ));
+    //Civi::log()->info('MEMBERSHIPRECORDS: ' . $myObjectRefKeysExternal);
+    if ($resultGetMembership['count'] > 0){
+      
+      $result = civicrm_api3('MembershipRecords', 'create', array(
+        'contact_id' => $resultGetMembership['values'][0]['contact_id'],
+        'membership_id' => $id,
+        'start_date' => $params['log_start_date'],
+        'end_date' => $params['end_date'],
+        'contribution_id' => "",
+      ));
+    }
+
+  }
+  if ($objectName == 'MembershipPayment' && $op == 'create' && $params['version'] != '3'){
+
+    $result = civicrm_api3('MembershipRecords', 'get', array(
+      'sequential' => 1,
+      'membership_id' => $params['membership_id'],
+      'options' => array('limit' => 0),
+    ));
+
+    Civi::log()->info('Result-Count: ' . $result['count'] . ' Last One: ' . $result['values'][($result['count'] - 1)]['id']);
+    $doItResult = civicrm_api3('MembershipRecords', 'create', array(
+      'id' => $result['values'][($result['count'] - 1)]['id'],
+      'contribution_id' => $params['contribution_id'],
+    ));
+  }
+  /*
+  * DEBUG -- INFO -- EXPLORE LEARN
+  */
+  Civi::log()->info('PRE --> OP: ' . $op . ' OBJECTNAME: ' . $objectName . ' ID: ' . $id . ' PARAMS: ' . $myObjectRefKeysExternal);
+
 }
 function membershiprecords_civicrm_post($op, $objectName, $objectId, &$objectRef) {
-  /*if ($objectName == 'Membership' && $op == 'create') {
-    CRM_Core_Transaction::addCallback(CRM_Core_Transaction::PHASE_POST_COMMIT,
-      'updateMembershipCustomField', array($objectRef->id));
-    break;
-  }*/
-  echo "POST";
-  echo "<pre>";
-  print_r($objectRef);
-  echo "</pre>";
-  die('COWABUNGA');
+
+  if ($objectName == 'Membership' && $op == 'create') {
+    
+    $result = civicrm_api3('Membership', 'get', array(
+      'sequential' => 1,
+      'return' => array("contact_id", "start_date", "end_date"),
+      'id' => $objectId,
+    ));
+    
+    $result = civicrm_api3('MembershipRecords', 'create', array(
+      'contact_id' => $result['values']['0']['contact_id'],
+      'membership_id' => $result['values']['0']['id'],
+      'start_date' => $result['values']['0']['start_date'],
+      'end_date' => $result['values']['0']['end_date'],
+      'contribution_id' => "",
+    ));
+  }
+  /*
+  * DEBUG -- INFO -- EXPLORE LEARN
+  */
+  Civi::log()->info('POST --> OP: ' . $op . ' OBJECTNAME: ' . $objectName . ' objectID: ' . $objectId );
+
 }
+
+/**
+* Implemented to look inside some objects that I pretend to use after all
+*/
+function explorationArray ($arrReceived) {
+  $result = '';
+  foreach($arrReceived as $key => $value) {
+    //echo "$key is at $value";
+    $result = $result .' ' . $key . '->'. $arrReceived[$key];
+  }
+  return $result;
+}
+  
 
 /**
  * Implements hook_civicrm_config().
