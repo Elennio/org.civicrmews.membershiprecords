@@ -13,7 +13,7 @@ function membershiprecords_civicrm_pre($op, $objectName, $id, &$params){
       'return' => array("contact_id"),
       'id' => $id,
     ));
-    //Civi::log()->info('MEMBERSHIPRECORDS: ' . $myObjectRefKeysExternal);
+
     if ($resultGetMembership['count'] > 0){
       
       $result = civicrm_api3('MembershipRecords', 'create', array(
@@ -34,16 +34,11 @@ function membershiprecords_civicrm_pre($op, $objectName, $id, &$params){
       'options' => array('limit' => 0),
     ));
 
-    Civi::log()->info('Result-Count: ' . $result['count'] . ' Last One: ' . $result['values'][($result['count'] - 1)]['id']);
     $doItResult = civicrm_api3('MembershipRecords', 'create', array(
       'id' => $result['values'][($result['count'] - 1)]['id'],
       'contribution_id' => $params['contribution_id'],
     ));
   }
-  /*
-  * DEBUG -- INFO -- EXPLORE LEARN
-  */
-  Civi::log()->info('PRE --> OP: ' . $op . ' OBJECTNAME: ' . $objectName . ' ID: ' . $id . ' PARAMS: ' . $myObjectRefKeysExternal);
 
 }
 function membershiprecords_civicrm_post($op, $objectName, $objectId, &$objectRef) {
@@ -64,10 +59,6 @@ function membershiprecords_civicrm_post($op, $objectName, $objectId, &$objectRef
       'contribution_id' => "",
     ));
   }
-  /*
-  * DEBUG -- INFO -- EXPLORE LEARN
-  */
-  Civi::log()->info('POST --> OP: ' . $op . ' OBJECTNAME: ' . $objectName . ' objectID: ' . $objectId );
 
 }
 
@@ -77,12 +68,63 @@ function membershiprecords_civicrm_post($op, $objectName, $objectId, &$objectRef
 function explorationArray ($arrReceived) {
   $result = '';
   foreach($arrReceived as $key => $value) {
-    //echo "$key is at $value";
+    
     $result = $result .' ' . $key . '->'. $arrReceived[$key];
   }
   return $result;
 }
+
+function getMembershipRecordsByContactId($id){
+
+  $result = civicrm_api3('MembershipRecords', 'get', array(
+      'sequential' => 1,
+      'contact_id' => $id,
+      'options' => array('limit' => 0),
+    ));
+
+  return $result;
+}
+
+/**
+* Transforming the Frontend.
+**/
+function membershiprecords_civicrm_summary( $contactID, &$content, &$contentPlacement = CRM_Utils_Hook::SUMMARY_BELOW ){
   
+  $membershipRecordsResult = getMembershipRecordsByContactId($contactID);
+  
+  $contador = 1;
+  $content = '<table> <tr><th> Membership Records: '. $membershipRecordsResult['count'] .'</th></tr>';
+
+  foreach ($membershipRecordsResult['values'] as $key => $value) {
+    
+    foreach ($membershipRecordsResult['values'][$key] as $keyDos => $value) {
+      
+      if($keyDos == 'id'){
+        $content = $content . '<tr><td>' . '<h3> Membership: ' . $contador . '</h3></tr></td>';
+        $contador++;
+      }elseif($keyDos == 'start_date' || $keyDos == 'end_date'){
+        $dateTime = "Start date: ";
+
+        if($keyDos == 'end_date'){
+          $dateTime = 'End date: ';
+        }
+
+        $content = $content . '<tr><td><b>' . $dateTime . '</b>' . $membershipRecordsResult['values'][$key][$keyDos] . '</tr></td>';
+        
+      }
+      //TODO remember to format the date, at this time shows the 00:00:00 its not neccesary!
+      if($keyDos == 'membership_id'){
+        $content = $content . '<tr><td><a href="/civicrm/contact/view/membership?action=view&reset=1&cid='.$membershipRecordsResult['values'][$key]['contact_id'].'&id='.$membershipRecordsResult['values'][$key][$keyDos].'&context=membership&selectedChild=member">Membership</a></tr></td>';
+      }elseif($keyDos == 'contribution_id'){
+        $content = $content . '<tr><td><a href="/civicrm/contact/view/contribution?reset=1&id='.$membershipRecordsResult['values'][$key][$keyDos].'&cid='.$membershipRecordsResult['values'][$key]['contact_id'].'&action=view&context=contribution&selectedChild=contribute">Contribution</a></tr></td>';
+      }
+      
+    }
+  }
+
+  $content = $content . '</table>';
+
+}
 
 /**
  * Implements hook_civicrm_config().

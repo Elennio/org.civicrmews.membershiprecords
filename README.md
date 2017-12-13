@@ -3,6 +3,7 @@
 ![Screenshot](/images/screenshot.png)
 
 This extension will record periods/terms when a membership its created or renewed.
+Also will show a link to the contribution if there was any payment.
 
 The extension is licensed under [AGPL-3.0](LICENSE.txt).
 
@@ -38,6 +39,7 @@ cv en membershiprecords
 ## Usage
 
 When installed go to renew a membership or start creating one...
+Then to see the membership records just select the contact view and see at the bottom, if there is any record you will be able to see it, 2 links will apear 1 for the Membership and if any payment registered the contribution link will be there too. 
 
 ## Known Issues
 
