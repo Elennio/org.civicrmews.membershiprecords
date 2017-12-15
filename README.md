@@ -1,6 +1,6 @@
 # org.civicrmews.membershiprecords
 
-![Screenshot](/images/screenshot.png)
+![Screenshot](/images/membershiprecords-extension.png)
 
 This extension will record periods/terms when a membership its created or renewed.
 Also will show a link to the contribution if there was any payment.
