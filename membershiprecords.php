@@ -4,7 +4,7 @@ require_once 'membershiprecords.civix.php';
 use CRM_Membershiprecords_ExtensionUtil as E;
 
 function membershiprecords_civicrm_pre($op, $objectName, $id, &$params){
-  $myObjectRefKeysExternal = explorationArray($params);
+  //$myObjectRefKeysExternal = explorationArray($params);
 
   if ($objectName == 'Membership' && $op == 'edit'){  
     //Getting the contact ID
@@ -85,40 +85,54 @@ function getMembershipRecordsByContactId($id){
   return $result;
 }
 
+/*
+* Populating the content.
+*/
+function contentPopulator($actualContent, $actualKeyDos, $actualMembershipRecordsResult, $actualCounter){
+
+  switch ($actualKeyDos) {
+    case "id":
+        $actualContent = $actualContent . '<tr><td>' . '<h3> Membership: ' . $actualCounter . '</h3></tr></td>';
+        break;
+    case "start_date":
+        $startDate = date_create($actualMembershipRecordsResult['start_date']);
+        $startDate = date_format($startDate, 'd/m/Y');
+        $actualContent = $actualContent . '<tr><td><b> Start Date: </b>' . $startDate . '</tr></td>';
+        break;
+    case "end_date":
+        $endDate = date_create($actualMembershipRecordsResult['end_date']);
+        $endDate = date_format($endDate, 'd/m/Y');
+        $actualContent = $actualContent . '<tr><td><b> End Date: </b>' . $endDate . '</tr></td>';
+        break;
+    case "membership_id":
+        $actualContent = $actualContent . '<tr><td><a href="/civicrm/contact/view/membership?action=view&reset=1&cid='.$actualMembershipRecordsResult['contact_id'].'&id='.$actualMembershipRecordsResult[$actualKeyDos].'&context=membership&selectedChild=member">Membership</a></tr></td>';
+        break;
+    case "contribution_id":
+        $actualContent = $actualContent . '<tr><td><a href="/civicrm/contact/view/contribution?reset=1&id='.$actualMembershipRecordsResult[$actualKeyDos].'&cid='.$actualMembershipRecordsResult['contact_id'].'&action=view&context=contribution&selectedChild=contribute">Contribution</a></tr></td>';
+        break;
+  }
+
+  return $actualContent;
+}
 /**
 * Transforming the Frontend.
 **/
 function membershiprecords_civicrm_summary( $contactID, &$content, &$contentPlacement = CRM_Utils_Hook::SUMMARY_BELOW ){
   
-  $membershipRecordsResult = getMembershipRecordsByContactId($contactID);
-  
   $contador = 1;
+  $membershipRecordsResult = getMembershipRecordsByContactId($contactID);
   $content = '<table> <tr><th> Membership Records: '. $membershipRecordsResult['count'] .'</th></tr>';
 
   foreach ($membershipRecordsResult['values'] as $key => $value) {
     
     foreach ($membershipRecordsResult['values'][$key] as $keyDos => $value) {
+
+      $content = contentPopulator($content, $keyDos, $membershipRecordsResult['values'][$key], $contador);
       
       if($keyDos == 'id'){
-        $content = $content . '<tr><td>' . '<h3> Membership: ' . $contador . '</h3></tr></td>';
+
         $contador++;
-      }elseif($keyDos == 'start_date' || $keyDos == 'end_date'){
-        $dateTime = "Start date: ";
-
-        if($keyDos == 'end_date'){
-          $dateTime = 'End date: ';
-        }
-
-        $content = $content . '<tr><td><b>' . $dateTime . '</b>' . $membershipRecordsResult['values'][$key][$keyDos] . '</tr></td>';
-        
       }
-      //TODO remember to format the date, at this time shows the 00:00:00 its not neccesary!
-      if($keyDos == 'membership_id'){
-        $content = $content . '<tr><td><a href="/civicrm/contact/view/membership?action=view&reset=1&cid='.$membershipRecordsResult['values'][$key]['contact_id'].'&id='.$membershipRecordsResult['values'][$key][$keyDos].'&context=membership&selectedChild=member">Membership</a></tr></td>';
-      }elseif($keyDos == 'contribution_id'){
-        $content = $content . '<tr><td><a href="/civicrm/contact/view/contribution?reset=1&id='.$membershipRecordsResult['values'][$key][$keyDos].'&cid='.$membershipRecordsResult['values'][$key]['contact_id'].'&action=view&context=contribution&selectedChild=contribute">Contribution</a></tr></td>';
-      }
-      
     }
   }
 
