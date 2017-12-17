@@ -122,8 +122,23 @@ function membershiprecords_civicrm_summary( $contactID, &$content, &$contentPlac
   $contador = 1;
   $membershipRecordsResult = getMembershipRecordsByContactId($contactID);
   $content = '<table> <tr><th> Membership Records: '. $membershipRecordsResult['count'] .'</th></tr>';
+  if($membershipRecordsResult['count'] < 1){
 
-  foreach ($membershipRecordsResult['values'] as $key => $value) {
+  }else{
+    foreach ($membershipRecordsResult['values'] as $key => $value) {
+    
+      foreach ($membershipRecordsResult['values'][$key] as $keyDos => $value) {
+
+        $content = contentPopulator($content, $keyDos, $membershipRecordsResult['values'][$key], $contador);
+        
+        if($keyDos == 'id'){
+
+          $contador++;
+        }
+      }
+    }
+  }
+  /*foreach ($membershipRecordsResult['values'] as $key => $value) {
     
     foreach ($membershipRecordsResult['values'][$key] as $keyDos => $value) {
 
@@ -134,10 +149,21 @@ function membershiprecords_civicrm_summary( $contactID, &$content, &$contentPlac
         $contador++;
       }
     }
-  }
+  }*/
 
   $content = $content . '</table>';
 
+}
+
+/**
+ * Implementation of hook_civicrm_entityTypes
+ */
+function membershiprecords_civicrm_entityTypes(&$entityTypes) {
+  $entityTypes[] = array(
+    'name'  => 'MembershipRecords',
+    'class' => 'CRM_Membershiprecords_DAO_MembershipRecords',
+    'table' => 'civicrm_membershiprecords',
+  );
 }
 
 /**
